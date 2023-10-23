@@ -135,7 +135,8 @@ Function Get-DatabaseListInfo {
 Function Test-DatabaseCredentials {
     # Parameters
     Param(
-        [Parameter()]$DBName
+        [Parameter()][string]$DBName,
+        [Parameter()][PSCustomObject]$DBCreds
     )
 
     # Trying to connect to Databases
