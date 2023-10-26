@@ -140,12 +140,21 @@ Function Test-DatabaseCredentials {
     )
 
     # Trying to connect to Databases
-    Switch ($DBName) {
-        "PostgresSQL" {}
+    Switch (DBName) {
+        # Testing Connection to 
+        "PostgresSQL" {
+            
+        }
+        # Testing Connection to 
         "MongoDB" {}
+        # Testing Connection to 
         "MicrosoftSQL" {}
+        # Testing Connection to 
         "MySQL" {}
+        # Testing Connection to 
         "SQLite" {}
+
+        # Ignore switch statement if DBName is incorrect
         default {}
     }
 
@@ -204,7 +213,7 @@ Function Invoke-DatabaseConnector {
 
                     # Create empty configuration if doesnt exist
                     if ($null -eq $($DBConnectorCredentials.$SelectedDatabaseConfigurationName))
-                    { Write-Host $ConstDatabasesCredentialsSchema; $DBConnectorCredentials | Add-Member -MemberType NoteProperty -Name "$SelectedDatabaseConfigurationName" -Value $($ConstDatabasesCredentialsSchema.PsObject.Copy()) }
+                    { $DBConnectorCredentials | Add-Member -MemberType NoteProperty -Name "$SelectedDatabaseConfigurationName" -Value $($ConstDatabasesCredentialsSchema.PsObject.Copy()) }
                     Write-Host $($DBConnectorCredentials.$SelectedDatabaseConfigurationName)
                     Write-Host "-------------------------------------------------------------------------------"
 
@@ -228,8 +237,8 @@ Function Invoke-DatabaseConnector {
                 }
                
                 # Trying Credentials to Connect Database
-
-
+                Test-DatabaseCredentials -DBName $SelectedDatabaseConfigurationName -DBCreds $($DBConnectorCredentials.$SelectedDatabaseConfigurationName)
+                Start-Sleep -Seconds 3
 
             }
             
