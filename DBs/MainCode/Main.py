@@ -6,13 +6,8 @@ import os
 import shutil
 from time import sleep
 from threading import Thread
+import sys
 import importlib
-#from .DBFunctions import FunctionsPostgresSQL as PostgresSQL
-#from .DBFunctions import FunctionsMicrosoftSQL as MicrosoftSQL
-#from .DBFunctions import FunctionsMySQL as MySQL
-#from .DBFunctions import FunctionsSQLite as SQLite
-#from .DBFunctions import FunctionsMongoDB as MongoDB
-
 
 # Constants
 SCRIPT_ROOT = os.path.dirname(__file__)
@@ -115,7 +110,7 @@ def Start_Json_Connector_Listener():
 # Starting the Data Distribution to all Locally Active DB PlaceHolders (Saving Files Locally)
 def Start_DataHolder_Distribution():
 
-    # Definign Global Variables
+    # Defining Global Variables
     global vLocalDistributionUp
 
     while True:
@@ -151,13 +146,16 @@ def Start_DataHolder_Distribution():
 # Starting the Data Distribution to all Remotely Active DB Engines (The Actuall Database)
 def Start_Database_Engine_Distribution():
 
-    print("Second")
+    # Defining Global Variables
+    global vDBEngineDistributionUp
+
     # Import all DBFunctions Modules:
+    sys.path.insert(0,fr"{SCRIPT_ROOT}\\DBFunctions")
     for vDBFunction in os.listdir(fr"{SCRIPT_ROOT}\\DBFunctions"):
         try:
-            from MainCode.DBFunctions import FunctionsPostgresSQL
-            #importlib.import_module(fr"{SCRIPT_ROOT}\\DBFunctions\\{vDBFunction}")
-            print(fr"Second {vDBFunction}")
+            importlib.import_module(fr"{vDBFunction}")
+            #import f"{vDBFunction}"
+            
         except:
             pass
 
@@ -166,15 +164,22 @@ def Start_Database_Engine_Distribution():
         if (vDBEngineDistributionUp == "False"):
             sleep(3); continue
 
-        try:
+        if True:
+            print("es0")
             # Get DB Credentials
-            with open(fr"{SCRIPT_UPPER_ROOT}\\Configuration\\DBCredentials.json") as f:
-                vDBCredentials = json.loads(f.read())
-
+            with open(fr"{SCRIPT_UPPER_ROOT}\\Configuration\\DBCredentials.json", "r") as f:
+                vDBCredentials = f.read()
+                print(vDBCredentials)
+                vDBCredentials = json.loads(vDBCredentials)
+                print(vDBCredentials)
+            print("es1")
             # Check what Database Engines are active, to know where to spread the data
             with open(fr"{SCRIPT_UPPER_ROOT}\\Configuration\\ActiveDatabases.json" , "r") as f:
                 vActiveDatabaseEngines = json.loads(f.read())
             
+            print("es2")
+            print(vDBCredentials)
+            print(vActiveDatabaseEngines)
             vActiveDatabaseEngines = vActiveDatabaseEngines['ActiveDatabaseEngines']
             for vActiveDatabaseEngine in vActiveDatabaseEngines:
                 # Stop if user doesnt want to spread data
@@ -201,8 +206,8 @@ def Start_Database_Engine_Distribution():
             sleep(2)
         
         # Retry if encounters error
-        except:
-            sleep(2)
+        #except:
+            #sleep(2)
 
 
 # Main Function
